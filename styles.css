@@ -5,17 +5,11 @@ html, body{
     background-color: beige;
 }
 .holder{
+    margin: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-.score{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: rubik;
-    font-size: 2em;
 }
 @font-face {
     font-family: rubik;

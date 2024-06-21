@@ -139,13 +139,13 @@ function gameLoop(delta) {
 
         ctx.font = "1em rubik";
         ctx.fillStyle = "black";
-        ctx.fillText(`Score: ${score} Highscore: ${highScore} Attempts: ${deaths}`, 20, 50);
+        ctx.fillText(`Score: ${score} Highscore: ${highScore}`, 20, 50);
 
         playerY += yVel;
 
         yVel += yGrav;
 
-        if (playerY >= HEIGHT - PLAYER_RADIUS) {
+        if (playerY >= HEIGHT) {
             startGame();
             return;
             yVel = 0;
@@ -182,20 +182,18 @@ document.addEventListener("keydown", (e) => {
 document.addEventListener("touchstart", (e) => {
     e.preventDefault();
     if (keypress) { return; }
-    if (e.key == "ArrowUp" || e.key == " ") {
-        if (yVel >= 0) {
-            yVel = -yVelInc;
-        } else if (yVel > -(yVelInc * 3)) {
-            yVel -= yVelInc;
-        }
-        keypress = true;
+    if (yVel >= 0) {
+        yVel = -yVelInc;
+    } else if (yVel > -(yVelInc * 3)) {
+        yVel -= yVelInc;
     }
-});
+    keypress = true;
+}, {passive:false});
 
 document.addEventListener("touchend", (e) => {
     e.preventDefault();
     keypress = false;
-});
+}, {passive:false});
 
 document.addEventListener("keyup", (e) => {
     keypress = false;
