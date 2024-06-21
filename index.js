@@ -1,8 +1,14 @@
+let WIDTH = window.innerWidth;
+let HEIGHT = window.innerHeight;
+
+let canvas = document.getElementById("canvas");
+canvas.width = WIDTH
+canvas.height = HEIGHT;
+
 // Constants but leave them able to be changed
 let FPS = 60;
 let M_PER_S = 1000;
-let WIDTH = 1200;
-let HEIGHT = 800;
+
 let GRAVITY = 20;
 let PLAYER_RADIUS = 25;
 let ENEMY_WIDTH = 80;
@@ -20,6 +26,7 @@ let enemies = [];
 let keypress = false;
 let score = 0;
 let highScore = -1;
+let deaths = -1;
 
 function drawPlayer(ctx, x, y, size = 1) {
     ctx.beginPath();
@@ -34,8 +41,10 @@ function startGame() {
         highScore = score;
     }
     
+    deaths += 1;
     yGrav = GRAVITY / FPS;
     yVelInc = 300 / FPS;
+    yVel = 1;
     enemies = []
     score = 0;
     frame = 0;
@@ -44,9 +53,9 @@ function startGame() {
     prevdelta = 0;
 
     // background
-    ctx.clearRect(0, 0, 1200, 800);
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
     ctx.fillStyle = "rgb(180, 220, 255)";
-    ctx.fillRect(0, 0, 1200, 800);
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
     enemies.push(new Enemy(Math.floor(Math.random()*4)))
     window.requestAnimationFrame(gameLoop);
 }
@@ -110,13 +119,14 @@ function gameLoop(delta) {
         const ctx = document.getElementById("canvas").getContext("2d");
 
         // background
-        ctx.clearRect(0, 0, 1200, 800);
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
         ctx.fillStyle = "rgb(180, 220, 255)";
-        ctx.fillRect(0, 0, 1200, 800);
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
         for (let i = 0, n = enemies.length; i < n; i++) {
             enemies[i].draw(ctx)
             if (enemies[i].check_player()) {
+                drawPlayer(ctx, playerX, playerY);
                 startGame();
                 return;
             }
@@ -124,16 +134,20 @@ function gameLoop(delta) {
         if (enemies[enemies.length-1].x <= 10) {
             enemies.pop();
         }
-
+        
         drawPlayer(ctx, playerX, playerY);
         
-        document.getElementById("score-text").innerHTML = `Score: ${score} Highscore: ${highScore}`;
+        ctx.font = "1.5em rubik";
+        ctx.fillStyle = "black";
+        ctx.fillText(`Score: ${score} Highscore: ${highScore} Attempts: ${deaths}`, 20, 50);
         
         playerY += yVel;
         
         yVel += yGrav;
         
         if (playerY >= HEIGHT - PLAYER_RADIUS) {
+            startGame();
+            return;
             yVel = 0;
             playerY = HEIGHT - PLAYER_RADIUS;
         } else if (playerY <= PLAYER_RADIUS) {
