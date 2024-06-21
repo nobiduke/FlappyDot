@@ -16,10 +16,10 @@ let ENEMY_SEGMENT_HEIGHT = HEIGHT / 4;
 
 // Globals
 let yGrav = GRAVITY / FPS;
-let playerX = Math.max(WIDTH / 4 - PLAYER_RADIUS*2, PLAYER_RADIUS*2);
+let playerX = Math.max(WIDTH / 4 - PLAYER_RADIUS * 2, PLAYER_RADIUS * 2);
 let yVel = 1;
 let yVelInc = 300 / FPS;
-let playerY = HEIGHT/2;
+let playerY = HEIGHT / 2;
 let frame = 0;
 let prevdelta = 0;
 let enemies = [];
@@ -37,10 +37,10 @@ function drawPlayer(ctx, x, y, size = 1) {
 
 function startGame() {
     const ctx = document.getElementById("canvas").getContext("2d");
-    if(score > highScore){
+    if (score > highScore) {
         highScore = score;
     }
-    
+
     deaths += 1;
     yGrav = GRAVITY / FPS;
     yVelInc = 300 / FPS;
@@ -48,22 +48,22 @@ function startGame() {
     enemies = []
     score = 0;
     frame = 0;
-    playerX = Math.max(WIDTH / 4 - PLAYER_RADIUS*2, PLAYER_RADIUS*2);
-    playerY = HEIGHT/2;
+    playerX = Math.max(WIDTH / 4 - PLAYER_RADIUS * 2, PLAYER_RADIUS * 2);
+    playerY = HEIGHT / 2;
     prevdelta = 0;
 
     // background
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
     ctx.fillStyle = "rgb(180, 220, 255)";
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
-    enemies.push(new Enemy(Math.floor(Math.random()*4)))
+    enemies.push(new Enemy(Math.floor(Math.random() * 4)))
     window.requestAnimationFrame(gameLoop);
 }
 
 class Enemy {
     constructor(opening_index) {
         this.opening_index = opening_index;
-        this.x = WIDTH - (ENEMY_WIDTH/2);
+        this.x = WIDTH - (ENEMY_WIDTH / 2);
         this.scored = false;
     }
     draw(ctx) {
@@ -80,34 +80,34 @@ class Enemy {
     }
     check_player() {
         let closestX, closestY;
-        if(playerX >= this.x && playerX <= this.x + ENEMY_WIDTH){
-            if(playerX > this.x+(ENEMY_WIDTH/2) && !this.scored){
+        if (playerX >= this.x && playerX <= this.x + ENEMY_WIDTH) {
+            if (playerX > this.x + (ENEMY_WIDTH / 2) && !this.scored) {
                 score++;
                 this.scored = true;
             }
             closestX = playerX;
         }
-        else if(Math.abs(this.x-playerX) < Math.abs(playerX-this.x-ENEMY_WIDTH)){
+        else if (Math.abs(this.x - playerX) < Math.abs(playerX - this.x - ENEMY_WIDTH)) {
             closestX = this.x;
         }
-        else{
+        else {
             closestX = this.x + ENEMY_WIDTH;
         }
 
-        if((playerY <= this.opening_index*ENEMY_SEGMENT_HEIGHT)
-            || (playerY >= (this.opening_index+1)*ENEMY_SEGMENT_HEIGHT)){
+        if ((playerY <= this.opening_index * ENEMY_SEGMENT_HEIGHT)
+            || (playerY >= (this.opening_index + 1) * ENEMY_SEGMENT_HEIGHT)) {
             closestY = playerY;
-        } else if(Math.abs(playerY-this.opening_index*ENEMY_SEGMENT_HEIGHT) < Math.abs((this.opening_index+1)*ENEMY_SEGMENT_HEIGHT-playerY)){
-            closestY = this.opening_index*ENEMY_SEGMENT_HEIGHT;
+        } else if (Math.abs(playerY - this.opening_index * ENEMY_SEGMENT_HEIGHT) < Math.abs((this.opening_index + 1) * ENEMY_SEGMENT_HEIGHT - playerY)) {
+            closestY = this.opening_index * ENEMY_SEGMENT_HEIGHT;
         }
-        else{
-            closestY = (this.opening_index+1)*ENEMY_SEGMENT_HEIGHT;
+        else {
+            closestY = (this.opening_index + 1) * ENEMY_SEGMENT_HEIGHT;
         }
 
-        if(Math.sqrt(Math.pow(playerX-closestX, 2) + Math.pow(playerY-closestY, 2)) < PLAYER_RADIUS){
+        if (Math.sqrt(Math.pow(playerX - closestX, 2) + Math.pow(playerY - closestY, 2)) < PLAYER_RADIUS) {
             return true;
         }
-        else{
+        else {
             return false;
         }
     }
@@ -131,20 +131,20 @@ function gameLoop(delta) {
                 return;
             }
         }
-        if (enemies[enemies.length-1].x <= 10) {
+        if (enemies[enemies.length - 1].x <= 10) {
             enemies.pop();
         }
-        
+
         drawPlayer(ctx, playerX, playerY);
-        
+
         ctx.font = "1em rubik";
         ctx.fillStyle = "black";
         ctx.fillText(`Score: ${score} Highscore: ${highScore} Attempts: ${deaths}`, 20, 50);
-        
+
         playerY += yVel;
-        
+
         yVel += yGrav;
-        
+
         if (playerY >= HEIGHT - PLAYER_RADIUS) {
             startGame();
             return;
@@ -154,12 +154,11 @@ function gameLoop(delta) {
             playerY = PLAYER_RADIUS;
             yVel = 0.1;
         }
-        
-        if(frame == 120){
+
+        if (frame == 120) {
             frame = 0;
-            enemies.push(new Enemy(Math.floor(Math.random()*4)))
-        } else
-        {
+            enemies.push(new Enemy(Math.floor(Math.random() * 4)))
+        } else {
             frame += 1;
         }
         prevdelta = delta;
@@ -169,20 +168,37 @@ function gameLoop(delta) {
 }
 
 document.addEventListener("keydown", (e) => {
-    if(keypress){return;}
+    if (keypress) { return; }
     if (e.key == "ArrowUp" || e.key == " ") {
         if (yVel >= 0) {
             yVel = -yVelInc;
-        } else if (yVel > -(yVelInc*3)){
+        } else if (yVel > -(yVelInc * 3)) {
             yVel -= yVelInc;
         }
         keypress = true;
     }
 });
 
-document.addEventListener("keyup", (e)=>{
+document.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    if (keypress) { return; }
+    if (e.key == "ArrowUp" || e.key == " ") {
+        if (yVel >= 0) {
+            yVel = -yVelInc;
+        } else if (yVel > -(yVelInc * 3)) {
+            yVel -= yVelInc;
+        }
+        keypress = true;
+    }
+});
+
+document.addEventListener("touchend", (e) => {
+    e.preventDefault();
     keypress = false;
-}
-);
+});
+
+document.addEventListener("keyup", (e) => {
+    keypress = false;
+});
 
 startGame();
