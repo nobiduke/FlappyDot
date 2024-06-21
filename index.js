@@ -16,10 +16,10 @@ let ENEMY_SEGMENT_HEIGHT = HEIGHT / 4;
 
 // Globals
 let yGrav = GRAVITY / FPS;
-let playerX = 300;
+let playerX = Math.max(WIDTH / 4 - PLAYER_RADIUS*2, PLAYER_RADIUS*2);
 let yVel = 1;
 let yVelInc = 300 / FPS;
-let playerY = 400;
+let playerY = HEIGHT/2;
 let frame = 0;
 let prevdelta = 0;
 let enemies = [];
@@ -48,8 +48,8 @@ function startGame() {
     enemies = []
     score = 0;
     frame = 0;
-    playerX = 300;
-    playerY = 400;
+    playerX = Math.max(WIDTH / 4 - PLAYER_RADIUS*2, PLAYER_RADIUS*2);
+    playerY = HEIGHT/2;
     prevdelta = 0;
 
     // background
@@ -137,7 +137,7 @@ function gameLoop(delta) {
         
         drawPlayer(ctx, playerX, playerY);
         
-        ctx.font = "1.5em rubik";
+        ctx.font = "1em rubik";
         ctx.fillStyle = "black";
         ctx.fillText(`Score: ${score} Highscore: ${highScore} Attempts: ${deaths}`, 20, 50);
         
